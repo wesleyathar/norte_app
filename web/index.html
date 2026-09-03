@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Organize suas finanças com Open Finance, categorização por IA e sincronização segura.">
+  <meta name="theme-color" content="#2F5BFF">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Norte">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>Norte · Finanças pessoais</title>
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+  <style>
+    #norte-splash {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      background: #FDFBFF;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      transition: opacity 0.35s ease;
+    }
+    @media (prefers-color-scheme: dark) {
+      #norte-splash { background: #12131A; }
+      #norte-splash .norte-name { color: #EDEEF3; }
+    }
+    #norte-splash .norte-badge {
+      width: 72px;
+      height: 72px;
+      border-radius: 20px;
+      background: #2F5BFF;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      font-weight: 700;
+      box-shadow: 0 12px 30px rgba(47, 91, 255, 0.35);
+    }
+    #norte-splash .norte-name {
+      font-size: 15px;
+      letter-spacing: 0.5px;
+      color: #1A1B22;
+    }
+    #norte-splash .norte-spinner {
+      width: 26px;
+      height: 26px;
+      border: 3px solid rgba(47, 91, 255, 0.2);
+      border-top-color: #2F5BFF;
+      border-radius: 50%;
+      animation: norte-spin 0.9s linear infinite;
+    }
+    @keyframes norte-spin { to { transform: rotate(360deg); } }
+  </style>
+  <div id="norte-splash">
+    <div class="norte-badge">N</div>
+    <div class="norte-spinner"></div>
+    <div class="norte-name">Norte</div>
+  </div>
+  <script>
+    // Remove o splash assim que o Flutter renderizar o primeiro frame.
+    window.addEventListener('flutter-first-frame', function () {
+      var splash = document.getElementById('norte-splash');
+      if (!splash) return;
+      splash.style.opacity = '0';
+      setTimeout(function () { splash.remove(); }, 350);
+    });
+  </script>
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>
