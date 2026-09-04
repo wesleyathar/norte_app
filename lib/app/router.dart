@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../features/account/account_cubit.dart';
+import '../features/account/login_page.dart';
 import '../features/budgets/budgets_page.dart';
 import '../features/dashboard/dashboard_page.dart';
 import '../features/insights/insights_page.dart';
@@ -13,6 +17,7 @@ import '../features/connections/connect_bank_page.dart';
 
 /// Rotas em português para deep links legíveis (norte://transacoes/123).
 abstract final class Routes {
+  static const login = '/login';
   static const onboarding = '/onboarding';
   static const unlock = '/unlock';
   static const dashboard = '/inicio';
@@ -23,10 +28,26 @@ abstract final class Routes {
   static const connectBank = '/conectar';
 }
 
-GoRouter createRouter() {
+GoRouter createRouter(AccountCubit accountCubit) {
   return GoRouter(
-    initialLocation: Routes.onboarding,
+    initialLocation: Routes.login,
+    refreshListenable: _CubitRefresh(accountCubit.stream),
+    redirect: (context, state) {
+      final status = accountCubit.state.status;
+      if (status == AccountStatus.unknown) return null;
+
+      final atLogin = state.matchedLocation == Routes.login;
+      final signedIn = status == AccountStatus.signedIn;
+
+      if (!signedIn) return atLogin ? null : Routes.login;
+      if (atLogin) return Routes.dashboard;
+      return null;
+    },
     routes: [
+      GoRoute(
+        path: Routes.login,
+        builder: (context, state) => const LoginPage(),
+      ),
       GoRoute(
         path: Routes.onboarding,
         builder: (context, state) => const OnboardingPage(),
@@ -59,4 +80,19 @@ StatefulShellBranch _branch(String path, Widget child) {
   return StatefulShellBranch(
     routes: [GoRoute(path: path, builder: (context, state) => child)],
   );
+}
+
+/// Faz o GoRouter reavaliar o redirect a cada mudança de sessão da conta.
+class _CubitRefresh extends ChangeNotifier {
+  _CubitRefresh(Stream<dynamic> stream) {
+    _subscription = stream.listen((_) => notifyListeners());
+  }
+
+  late final StreamSubscription<dynamic> _subscription;
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
 }

@@ -2,42 +2,38 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:norte_app/app/app.dart';
 
+import 'support/fake_account_auth_service.dart';
 import 'support/fake_finance_repository.dart';
 import 'support/fake_auth_repository.dart';
 
-/// O onboarding tem ilustrações em loop infinito, então nesta tela é preciso
-/// avançar o relógio manualmente em vez de usar pumpAndSettle.
-Future<void> _skipOnboarding(WidgetTester tester) async {
+/// Sobe o app com uma conta já autenticada (fake) e aguarda cair no dashboard.
+Future<void> _pumpSignedIn(WidgetTester tester) async {
   await tester.pumpWidget(NorteApp(
     repository: FakeFinanceRepository(),
     authRepository: FakeAuthRepository(),
+    accountAuthService: FakeAccountAuthService(),
   ));
-  await tester.pump();
-
-  expect(find.text('Pular'), findsOneWidget);
-  await tester.tap(find.text('Pular'));
-
   await tester.pump();
   await tester.pump(const Duration(seconds: 1));
   await tester.pumpAndSettle();
 }
 
 void main() {
-  testWidgets('onboarding apresenta os três passos', (tester) async {
+  testWidgets('app não autenticado mostra a tela de login', (tester) async {
     await tester.pumpWidget(NorteApp(
       repository: FakeFinanceRepository(),
       authRepository: FakeAuthRepository(),
+      accountAuthService: FakeAccountAuthService(initialUser: null),
     ));
-    await tester.pump();
+    await tester.pumpAndSettle();
 
-    expect(find.text('Todas as suas contas em um lugar'), findsOneWidget);
-    expect(find.text('Continuar'), findsOneWidget);
+    expect(find.text('Continuar com Google'), findsOneWidget);
   });
 
-  testWidgets('pular onboarding leva ao dashboard e navega entre abas', (
+  testWidgets('após login abre o dashboard e navega entre abas', (
     tester,
   ) async {
-    await _skipOnboarding(tester);
+    await _pumpSignedIn(tester);
 
     expect(find.byType(NavigationBar), findsOneWidget);
     expect(find.text('Saldo consolidado'), findsOneWidget);
@@ -52,7 +48,7 @@ void main() {
   });
 
   testWidgets('transações listam os lançamentos carregados', (tester) async {
-    await _skipOnboarding(tester);
+    await _pumpSignedIn(tester);
 
     await tester.tap(find.text('Transações'));
     await tester.pumpAndSettle();

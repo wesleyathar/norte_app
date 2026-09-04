@@ -9,6 +9,7 @@ import '../../core/utils/formatters.dart';
 import '../../domain/models/institution.dart';
 import '../../shared/widgets/section_header.dart';
 import '../../shared/widgets/staggered_fade_in.dart';
+import '../account/account_cubit.dart';
 import '../connections/connections_cubit.dart';
 import '../finance/finance_cubit.dart';
 import '../auth/auth_settings_section.dart';
@@ -261,9 +262,41 @@ class _ProfilePageState extends State<ProfilePage> {
 class _ProfileHeader extends StatelessWidget {
   const _ProfileHeader();
 
+  Future<void> _confirmSignOut(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Sair da conta?'),
+        content: const Text(
+          'Você poderá entrar novamente com o Google a qualquer momento.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Sair'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && context.mounted) {
+      await context.read<AccountCubit>().signOut();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final user = context.watch<AccountCubit>().state.user;
+    final name = user?.displayName?.trim().isNotEmpty == true
+        ? user!.displayName!
+        : 'Sua conta';
+    final email = user?.email ?? 'Conectado';
+    final photo = user?.photoUrl;
+    final initial = name.isEmpty ? 'N' : name.substring(0, 1).toUpperCase();
 
     return Card(
       color: theme.colorScheme.primaryContainer,
@@ -274,8 +307,10 @@ class _ProfileHeader extends StatelessWidget {
             CircleAvatar(
               radius: 28,
               backgroundColor: theme.colorScheme.primary,
+              foregroundImage:
+                  photo != null ? NetworkImage(photo) : null,
               child: Text(
-                'N',
+                initial,
                 style: theme.textTheme.titleLarge?.copyWith(
                   color: theme.colorScheme.onPrimary,
                 ),
@@ -287,25 +322,30 @@ class _ProfileHeader extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Sua conta',
+                    name,
                     style: theme.textTheme.titleMedium?.copyWith(
                       color: theme.colorScheme.onPrimaryContainer,
                       fontWeight: FontWeight.w600,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    'Plano gratuito',
+                    email,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onPrimaryContainer,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
             ),
-            FilledButton.tonal(
-              onPressed: () {},
-              style: FilledButton.styleFrom(minimumSize: const Size(0, 40)),
-              child: const Text('Assinar Pro'),
+            IconButton(
+              icon: const Icon(Icons.logout),
+              tooltip: 'Sair',
+              color: theme.colorScheme.onPrimaryContainer,
+              onPressed: () => _confirmSignOut(context),
             ),
           ],
         ),

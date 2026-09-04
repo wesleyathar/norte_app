@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "690384477856",
+    "project_id": "norte-22f11",
+    "storage_bucket": "norte-22f11.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:690384477856:android:7ce84fd5e2a7969f65f3c5",
+        "android_client_info": {
+          "package_name": "br.com.norte.norte_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "690384477856-phggb4qjvs1s7bik1elcmt5rkf73v2st.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDC6_03X-mWluZ0GzbdkZOGtc-aKdNy1e0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "690384477856-phggb4qjvs1s7bik1elcmt5rkf73v2st.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -11,9 +11,11 @@ import '../data/sync/sync_metadata_store.dart';
 import '../domain/ml/transaction_categorizer.dart';
 import '../domain/repositories/finance_repository.dart';
 import '../domain/repositories/auth_repository.dart';
+import '../domain/services/account_auth_service.dart';
 import '../domain/services/open_finance_service.dart';
 import '../domain/sync/cloud_sync_service.dart';
 import '../features/finance/finance_cubit.dart';
+import '../features/account/account_cubit.dart';
 import '../features/auth/auth_cubit.dart';
 import '../features/connections/connections_cubit.dart';
 import '../features/sync/sync_cubit.dart';
@@ -24,6 +26,7 @@ class NorteApp extends StatefulWidget {
     super.key,
     required this.repository,
     required this.authRepository,
+    required this.accountAuthService,
     this.openFinanceService = const MockOpenFinanceService(),
     this.categorizer,
     this.cloudSyncService,
@@ -32,6 +35,7 @@ class NorteApp extends StatefulWidget {
 
   final FinanceRepository repository;
   final AuthRepository authRepository;
+  final AccountAuthService accountAuthService;
   final OpenFinanceService openFinanceService;
   final TransactionCategorizer? categorizer;
   final CloudSyncService? cloudSyncService;
@@ -42,7 +46,8 @@ class NorteApp extends StatefulWidget {
 }
 
 class _NorteAppState extends State<NorteApp> {
-  late final GoRouter _router = createRouter();
+  late final AccountCubit _accountCubit = AccountCubit(widget.accountAuthService);
+  late final GoRouter _router = createRouter(_accountCubit);
   final _motionSettings = MotionSettings();
   late final CloudSyncService _cloudSync =
       widget.cloudSyncService ?? MockCloudSyncService();
@@ -51,6 +56,7 @@ class _NorteAppState extends State<NorteApp> {
 
   @override
   void dispose() {
+    _accountCubit.close();
     _motionSettings.dispose();
     super.dispose();
   }
@@ -59,6 +65,7 @@ class _NorteAppState extends State<NorteApp> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider.value(value: _accountCubit),
         BlocProvider(
           create: (_) => AuthCubit(widget.authRepository)..initialize(),
         ),
@@ -83,20 +90,29 @@ class _NorteAppState extends State<NorteApp> {
       ],
       child: MotionSettingsScope(
         settings: _motionSettings,
-        child: MaterialApp.router(
-          title: 'Norte',
-          debugShowCheckedModeBanner: false,
-          theme: AppTheme.light(),
-          darkTheme: AppTheme.dark(),
-          themeMode: ThemeMode.system,
-          routerConfig: _router,
-          locale: const Locale('pt', 'BR'),
-          supportedLocales: const [Locale('pt', 'BR')],
-          localizationsDelegates: const [
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
+        child: BlocListener<AccountCubit, AccountState>(
+          listenWhen: (prev, curr) => prev.status != curr.status,
+          listener: (context, state) {
+            // Recarrega os dados financeiros ao trocar de sessão (login/logout).
+            if (state.status != AccountStatus.unknown) {
+              context.read<FinanceCubit>().load();
+            }
+          },
+          child: MaterialApp.router(
+            title: 'Norte',
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.light(),
+            darkTheme: AppTheme.dark(),
+            themeMode: ThemeMode.system,
+            routerConfig: _router,
+            locale: const Locale('pt', 'BR'),
+            supportedLocales: const [Locale('pt', 'BR')],
+            localizationsDelegates: const [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+          ),
         ),
       ),
     );

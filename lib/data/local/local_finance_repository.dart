@@ -5,7 +5,6 @@ import '../../domain/models/institution.dart';
 import '../../domain/models/transaction.dart';
 import '../../domain/repositories/finance_repository.dart';
 import '../../domain/services/open_finance_service.dart';
-import '../mock_data.dart';
 import 'secure_key_store.dart';
 
 /// Repositório sobre uma box do Hive criptografada com AES-256.
@@ -35,20 +34,7 @@ class LocalFinanceRepository implements FinanceRepository {
       encryptionCipher: HiveAesCipher(key),
     );
 
-    final repository = LocalFinanceRepository._(box);
-    if (box.isEmpty) await repository._seed();
-    return repository;
-  }
-
-  /// Popula a base na primeira execução. Sai quando o Open Finance entrar.
-  Future<void> _seed() async {
-    final transactions = MockData.transactions;
-    await _box.putAll({
-      _accountsKey: [for (final a in MockData.accounts) a.toJson()],
-      _transactionsKey: [for (final t in transactions) t.toJson()],
-      _budgetsKey: [for (final b in MockData.budgets(transactions)) b.toJson()],
-      _goalsKey: [for (final g in MockData.goals()) g.toJson()],
-    });
+    return LocalFinanceRepository._(box);
   }
 
   List<Map<String, dynamic>> _readList(String key) {
