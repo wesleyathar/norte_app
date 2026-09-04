@@ -103,7 +103,7 @@ class _NorteAppState extends State<NorteApp> {
             debugShowCheckedModeBanner: false,
             theme: AppTheme.light(),
             darkTheme: AppTheme.dark(),
-            themeMode: ThemeMode.system,
+            themeMode: ThemeMode.dark,
             routerConfig: _router,
             locale: const Locale('pt', 'BR'),
             supportedLocales: const [Locale('pt', 'BR')],

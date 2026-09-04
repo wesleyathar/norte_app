@@ -2,9 +2,36 @@ import 'package:flutter/material.dart';
 
 /// Paleta base da marca. As cores derivadas vêm do [ColorScheme.fromSeed].
 abstract final class AppColors {
-  static const seed = Color(0xFF2F5BFF);
+  static const seed = Color(0xFF6C4DFF);
+
+  /// Gradiente principal da marca (herói, botões, destaques).
+  static const brandGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFF5B8CFF), Color(0xFF6C4DFF), Color(0xFFB14DFF)],
+  );
+
+  /// Gradiente quente para acentos e cartões secundários.
+  static const sunsetGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFFFF6FB5), Color(0xFFFF8A3D)],
+  );
+
+  /// Gradiente de fundo (aplicado atrás do conteúdo, bem sutil).
+  static const auroraGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [Color(0xFF141326), Color(0xFF0C0B18)],
+  );
+
+  /// Superfícies profundas do tema escuro (dark-first caprichado).
+  static const darkBackground = Color(0xFF0C0B18);
+  static const darkSurface = Color(0xFF16152A);
+  static const darkSurfaceHigh = Color(0xFF20203A);
 
   static const positiveLight = Color(0xFF00A870);
+
   static const positiveDark = Color(0xFF3DDCA0);
 
   static const negativeLight = Color(0xFFD93B47);

@@ -16,7 +16,9 @@ abstract final class AppRadius {
   static const sm = Radius.circular(8);
   static const md = Radius.circular(12);
   static const lg = Radius.circular(20);
+  static const xl = Radius.circular(28);
 
-  static const cardBorder = BorderRadius.all(md);
-  static const sheetBorder = BorderRadius.vertical(top: lg);
+  static const cardBorder = BorderRadius.all(lg);
+  static const heroBorder = BorderRadius.all(xl);
+  static const sheetBorder = BorderRadius.vertical(top: xl);
 }

@@ -9,15 +9,27 @@ abstract final class AppTheme {
   static ThemeData dark() => _build(Brightness.dark);
 
   static ThemeData _build(Brightness brightness) {
-    final scheme = ColorScheme.fromSeed(
+    final isDark = brightness == Brightness.dark;
+    var scheme = ColorScheme.fromSeed(
       seedColor: AppColors.seed,
       brightness: brightness,
     );
+    if (isDark) {
+      // Dark-first caprichado: superfícies profundas e vibrantes.
+      scheme = scheme.copyWith(
+        surface: AppColors.darkBackground,
+        surfaceContainerLowest: AppColors.darkBackground,
+        surfaceContainerLow: AppColors.darkSurface,
+        surfaceContainer: AppColors.darkSurface,
+        surfaceContainerHigh: AppColors.darkSurfaceHigh,
+        surfaceContainerHighest: AppColors.darkSurfaceHigh,
+      );
+    }
     final base = ThemeData(colorScheme: scheme, useMaterial3: true);
 
     return base.copyWith(
       scaffoldBackgroundColor: scheme.surface,
-      textTheme: GoogleFonts.robotoTextTheme(base.textTheme),
+      textTheme: GoogleFonts.interTextTheme(base.textTheme),
       extensions: [
         brightness == Brightness.light
             ? AppSemanticColors.light
@@ -27,10 +39,11 @@ abstract final class AppTheme {
         backgroundColor: scheme.surface,
         surfaceTintColor: Colors.transparent,
         centerTitle: false,
-        scrolledUnderElevation: 0.5,
-        titleTextStyle: GoogleFonts.roboto(
-          fontSize: 22,
-          fontWeight: FontWeight.w600,
+        scrolledUnderElevation: 0,
+        titleTextStyle: GoogleFonts.inter(
+          fontSize: 24,
+          fontWeight: FontWeight.w700,
+          letterSpacing: -0.5,
           color: scheme.onSurface,
         ),
       ),
@@ -42,13 +55,11 @@ abstract final class AppTheme {
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          minimumSize: const Size.fromHeight(52),
-          shape: const RoundedRectangleBorder(
-            borderRadius: AppRadius.cardBorder,
-          ),
-          textStyle: GoogleFonts.roboto(
+          minimumSize: const Size.fromHeight(54),
+          shape: const StadiumBorder(),
+          textStyle: GoogleFonts.inter(
             fontSize: 16,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ),
@@ -79,22 +90,29 @@ abstract final class AppTheme {
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: scheme.surface,
         surfaceTintColor: Colors.transparent,
-        indicatorColor: scheme.secondaryContainer,
+        indicatorColor: scheme.primary.withValues(alpha: 0.18),
         elevation: 0,
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         labelTextStyle: WidgetStateProperty.resolveWith(
-          (states) => GoogleFonts.roboto(
+          (states) => GoogleFonts.inter(
             fontSize: 12,
             fontWeight: states.contains(WidgetState.selected)
-                ? FontWeight.w600
-                : FontWeight.w400,
+                ? FontWeight.w700
+                : FontWeight.w500,
+          ),
+        ),
+        iconTheme: WidgetStateProperty.resolveWith(
+          (states) => IconThemeData(
+            color: states.contains(WidgetState.selected)
+                ? scheme.primary
+                : scheme.onSurfaceVariant,
           ),
         ),
       ),
       dividerTheme: DividerThemeData(
         space: 1,
         thickness: 1,
-        color: scheme.outlineVariant,
+        color: scheme.outlineVariant.withValues(alpha: 0.5),
       ),
     );
   }
