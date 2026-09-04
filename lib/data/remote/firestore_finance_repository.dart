@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../domain/models/budget.dart';
 import '../../domain/models/institution.dart';
+import '../../domain/models/patrimony.dart';
 import '../../domain/models/transaction.dart';
 import '../../domain/repositories/finance_repository.dart';
 import '../../domain/services/open_finance_service.dart';
@@ -46,6 +47,7 @@ class FirestoreFinanceRepository implements FinanceRepository {
       _collection('budgets')!.get(),
       _collection('goals')!.get(),
       _collection('connections')!.get(),
+      _collection('patrimony')!.get(),
     ]);
 
     final transactions = [
@@ -64,6 +66,9 @@ class FirestoreFinanceRepository implements FinanceRepository {
       connections: [
         for (final doc in results[4].docs) BankConnection.fromJson(doc.data()),
       ],
+      patrimony: [
+        for (final doc in results[5].docs) PatrimonyItem.fromJson(doc.data()),
+      ],
     );
   }
 
@@ -77,6 +82,20 @@ class FirestoreFinanceRepository implements FinanceRepository {
   @override
   Future<void> deleteTransaction(String id) async {
     final collection = _collection('transactions');
+    if (collection == null) return;
+    await collection.doc(id).delete();
+  }
+
+  @override
+  Future<void> savePatrimonyItem(PatrimonyItem item) async {
+    final collection = _collection('patrimony');
+    if (collection == null) return;
+    await collection.doc(item.id).set(item.toJson());
+  }
+
+  @override
+  Future<void> deletePatrimonyItem(String id) async {
+    final collection = _collection('patrimony');
     if (collection == null) return;
     await collection.doc(id).delete();
   }
@@ -136,6 +155,7 @@ class FirestoreFinanceRepository implements FinanceRepository {
       'budgets',
       'goals',
       'connections',
+      'patrimony',
     ]) {
       final existing = await _collection(name)!.get();
       for (final doc in existing.docs) {
@@ -163,6 +183,10 @@ class FirestoreFinanceRepository implements FinanceRepository {
         _collection('connections')!.doc(connection.id),
         connection.toJson(),
       );
+    }
+
+    for (final item in snapshot.patrimony) {
+      batch.set(_collection('patrimony')!.doc(item.id), item.toJson());
     }
 
     await batch.commit();

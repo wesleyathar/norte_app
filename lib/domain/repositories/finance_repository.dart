@@ -1,5 +1,6 @@
 import '../models/budget.dart';
 import '../models/institution.dart';
+import '../models/patrimony.dart';
 import '../models/transaction.dart';
 import '../services/open_finance_service.dart';
 
@@ -11,6 +12,7 @@ class FinanceSnapshot {
     required this.budgetLimits,
     required this.goals,
     this.connections = const [],
+    this.patrimony = const [],
   });
 
   final List<Account> accounts;
@@ -23,12 +25,16 @@ class FinanceSnapshot {
   /// Conexões Open Finance ativas com instituições financeiras.
   final List<BankConnection> connections;
 
+  /// Itens manuais de patrimônio (ativos e passivos) informados pelo usuário.
+  final List<PatrimonyItem> patrimony;
+
   Map<String, dynamic> toJson() => {
     'accounts': [for (final a in accounts) a.toJson()],
     'transactions': [for (final t in transactions) t.toJson()],
     'budgetLimits': [for (final b in budgetLimits) b.toJson()],
     'goals': [for (final g in goals) g.toJson()],
     'connections': [for (final c in connections) c.toJson()],
+    'patrimony': [for (final p in patrimony) p.toJson()],
   };
 
   factory FinanceSnapshot.fromJson(Map<String, dynamic> json) {
@@ -46,6 +52,7 @@ class FinanceSnapshot {
       connections: [
         for (final j in list('connections')) BankConnection.fromJson(j),
       ],
+      patrimony: [for (final j in list('patrimony')) PatrimonyItem.fromJson(j)],
     );
   }
 }
@@ -62,6 +69,12 @@ abstract interface class FinanceRepository {
 
   /// Remove a conexão e todos os dados (contas e transações) associados.
   Future<void> removeConnection(String connectionId);
+
+  /// Cria ou atualiza um item manual de patrimônio.
+  Future<void> savePatrimonyItem(PatrimonyItem item);
+
+  /// Remove um item manual de patrimônio.
+  Future<void> deletePatrimonyItem(String id);
 
   /// Sobrescreve todo o estado local (usado ao baixar dados da nuvem).
   Future<void> replaceAll(FinanceSnapshot snapshot);

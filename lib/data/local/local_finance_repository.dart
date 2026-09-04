@@ -2,6 +2,7 @@ import 'package:hive_ce_flutter/hive_flutter.dart';
 
 import '../../domain/models/budget.dart';
 import '../../domain/models/institution.dart';
+import '../../domain/models/patrimony.dart';
 import '../../domain/models/transaction.dart';
 import '../../domain/repositories/finance_repository.dart';
 import '../../domain/services/open_finance_service.dart';
@@ -20,6 +21,7 @@ class LocalFinanceRepository implements FinanceRepository {
   static const _budgetsKey = 'budgets';
   static const _goalsKey = 'goals';
   static const _connectionsKey = 'connections';
+  static const _patrimonyKey = 'patrimony';
 
   final Box<dynamic> _box;
 
@@ -62,6 +64,10 @@ class LocalFinanceRepository implements FinanceRepository {
         for (final json in _readList(_connectionsKey))
           BankConnection.fromJson(json),
       ],
+      patrimony: [
+        for (final json in _readList(_patrimonyKey))
+          PatrimonyItem.fromJson(json),
+      ],
     );
   }
 
@@ -84,6 +90,25 @@ class LocalFinanceRepository implements FinanceRepository {
     final all = _readList(_transactionsKey)
       ..removeWhere((json) => json['id'] == id);
     await _box.put(_transactionsKey, all);
+  }
+
+  @override
+  Future<void> savePatrimonyItem(PatrimonyItem item) async {
+    final all = _readList(_patrimonyKey);
+    final index = all.indexWhere((json) => json['id'] == item.id);
+    if (index == -1) {
+      all.add(item.toJson());
+    } else {
+      all[index] = item.toJson();
+    }
+    await _box.put(_patrimonyKey, all);
+  }
+
+  @override
+  Future<void> deletePatrimonyItem(String id) async {
+    final all = _readList(_patrimonyKey)
+      ..removeWhere((json) => json['id'] == id);
+    await _box.put(_patrimonyKey, all);
   }
 
   @override
@@ -133,6 +158,7 @@ class LocalFinanceRepository implements FinanceRepository {
       _budgetsKey: [for (final b in snapshot.budgetLimits) b.toJson()],
       _goalsKey: [for (final g in snapshot.goals) g.toJson()],
       _connectionsKey: [for (final c in snapshot.connections) c.toJson()],
+      _patrimonyKey: [for (final p in snapshot.patrimony) p.toJson()],
     });
   }
 }

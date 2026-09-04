@@ -9,6 +9,7 @@ import '../features/budgets/budgets_page.dart';
 import '../features/dashboard/dashboard_page.dart';
 import '../features/insights/insights_page.dart';
 import '../features/onboarding/onboarding_page.dart';
+import '../features/patrimony/patrimony_page.dart';
 import '../features/profile/profile_page.dart';
 import '../features/shell/home_shell.dart';
 import '../features/transactions/transactions_page.dart';
@@ -26,6 +27,7 @@ abstract final class Routes {
   static const insights = '/insights';
   static const profile = '/perfil';
   static const connectBank = '/conectar';
+  static const patrimony = '/patrimonio';
 }
 
 GoRouter createRouter(AccountCubit accountCubit) {
@@ -59,6 +61,10 @@ GoRouter createRouter(AccountCubit accountCubit) {
       GoRoute(
         path: Routes.connectBank,
         builder: (context, state) => const ConnectBankPage(),
+      ),
+      GoRoute(
+        path: Routes.patrimony,
+        builder: (context, state) => const PatrimonyPage(),
       ),
       StatefulShellRoute(
         builder: (context, state, navigationShell) => navigationShell,

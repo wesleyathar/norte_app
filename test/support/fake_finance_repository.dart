@@ -1,6 +1,7 @@
 import 'package:norte_app/data/mock_data.dart';
 import 'package:norte_app/domain/models/budget.dart';
 import 'package:norte_app/domain/models/institution.dart';
+import 'package:norte_app/domain/models/patrimony.dart';
 import 'package:norte_app/domain/models/transaction.dart';
 import 'package:norte_app/domain/repositories/finance_repository.dart';
 import 'package:norte_app/domain/services/open_finance_service.dart';
@@ -16,6 +17,7 @@ class FakeFinanceRepository implements FinanceRepository {
   List<Account> _accounts;
   List<Goal> _goals;
   final List<BankConnection> _connections = [];
+  final List<PatrimonyItem> _patrimony = [];
 
   int loadCount = 0;
 
@@ -29,6 +31,7 @@ class FakeFinanceRepository implements FinanceRepository {
       budgetLimits: MockData.budgets(_transactions),
       goals: List.of(_goals),
       connections: List.of(_connections),
+      patrimony: List.of(_patrimony),
     );
   }
 
@@ -45,6 +48,21 @@ class FakeFinanceRepository implements FinanceRepository {
   @override
   Future<void> deleteTransaction(String id) async {
     _transactions.removeWhere((t) => t.id == id);
+  }
+
+  @override
+  Future<void> savePatrimonyItem(PatrimonyItem item) async {
+    final index = _patrimony.indexWhere((p) => p.id == item.id);
+    if (index == -1) {
+      _patrimony.add(item);
+    } else {
+      _patrimony[index] = item;
+    }
+  }
+
+  @override
+  Future<void> deletePatrimonyItem(String id) async {
+    _patrimony.removeWhere((p) => p.id == id);
   }
 
   @override
@@ -74,5 +92,8 @@ class FakeFinanceRepository implements FinanceRepository {
     _connections
       ..clear()
       ..addAll(snapshot.connections);
+    _patrimony
+      ..clear()
+      ..addAll(snapshot.patrimony);
   }
 }

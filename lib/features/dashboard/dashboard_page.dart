@@ -16,6 +16,7 @@ import '../finance/finance_cubit.dart';
 import 'widgets/balance_card.dart';
 import 'widgets/insight_card.dart';
 import 'widgets/month_chart_card.dart';
+import 'widgets/net_worth_card.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -101,9 +102,20 @@ class _DashboardContent extends StatelessWidget {
             onToggleObscured: onToggleObscured,
           ),
         ),
-        const SectionHeader(title: 'Receitas x despesas'),
+        const SizedBox(height: AppSpacing.md),
         StaggeredFadeIn(
           index: 1,
+          child: NetWorthCard(
+            netWorth: state.netWorth,
+            assets: state.assetsTotal,
+            liabilities: state.liabilitiesTotal,
+            obscured: obscured,
+            onTap: () => context.push(Routes.patrimony),
+          ),
+        ),
+        const SectionHeader(title: 'Receitas x despesas'),
+        StaggeredFadeIn(
+          index: 2,
           child: MonthChartCard(transactions: state.transactions),
         ),
         const SectionHeader(title: 'Insights'),
@@ -111,7 +123,7 @@ class _DashboardContent extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.md),
             child: StaggeredFadeIn(
-              index: index + 2,
+              index: index + 3,
               child: InsightCard(insight: insight),
             ),
           ),
