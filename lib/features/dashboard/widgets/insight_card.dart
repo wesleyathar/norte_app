@@ -55,8 +55,15 @@ class _InsightCardState extends State<InsightCard> {
                     Container(
                       padding: const EdgeInsets.all(AppSpacing.sm),
                       decoration: BoxDecoration(
-                        color: insight.color.withValues(alpha: 0.16),
-                        borderRadius: AppRadius.cardBorder,
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            insight.color.withValues(alpha: 0.28),
+                            insight.color.withValues(alpha: 0.12),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(16),
                       ),
                       child: Icon(insight.icon, color: insight.color, size: 20),
                     ),

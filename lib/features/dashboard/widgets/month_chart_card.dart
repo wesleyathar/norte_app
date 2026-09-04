@@ -194,9 +194,13 @@ class _MonthBars extends StatelessWidget {
 
   BarChartRodData _rod(double value, Color color) => BarChartRodData(
     toY: value,
-    width: 10,
-    color: color,
-    borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+    width: 12,
+    gradient: LinearGradient(
+      begin: Alignment.bottomCenter,
+      end: Alignment.topCenter,
+      colors: [color.withValues(alpha: 0.55), color],
+    ),
+    borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
   );
 }
 

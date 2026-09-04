@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import 'account_cubit.dart';
 
@@ -29,12 +30,18 @@ class LoginPage extends StatelessWidget {
               child: Column(
                 children: [
                   const Spacer(),
-                  _BrandBadge(colors: colors),
+                  const _BrandBadge(),
                   const SizedBox(height: AppSpacing.xl),
-                  Text(
-                    'Norte',
-                    style: theme.textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
+                  ShaderMask(
+                    shaderCallback: (bounds) =>
+                        AppColors.brandGradient.createShader(bounds),
+                    child: Text(
+                      'Norte',
+                      style: theme.textTheme.displaySmall?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                        letterSpacing: -1,
+                      ),
                     ),
                   ),
                   const SizedBox(height: AppSpacing.sm),
@@ -88,25 +95,31 @@ class LoginPage extends StatelessWidget {
 }
 
 class _BrandBadge extends StatelessWidget {
-  const _BrandBadge({required this.colors});
-
-  final ColorScheme colors;
+  const _BrandBadge();
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 88,
-      height: 88,
+      width: 96,
+      height: 96,
       decoration: BoxDecoration(
-        color: colors.primary,
-        borderRadius: BorderRadius.circular(24),
+        gradient: AppColors.brandGradient,
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF6C4DFF).withValues(alpha: 0.45),
+            blurRadius: 32,
+            spreadRadius: 2,
+            offset: const Offset(0, 12),
+          ),
+        ],
       ),
       alignment: Alignment.center,
-      child: Text(
+      child: const Text(
         'N',
         style: TextStyle(
-          color: colors.onPrimary,
-          fontSize: 48,
+          color: Colors.white,
+          fontSize: 52,
           fontWeight: FontWeight.w800,
         ),
       ),

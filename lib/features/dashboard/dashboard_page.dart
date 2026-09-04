@@ -84,7 +84,6 @@ class _DashboardContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final currentMonth = state.currentMonth;
     final recent = state.transactions.take(5).toList();
     final insights = _buildInsights(context, currentMonth);
@@ -137,13 +136,6 @@ class _DashboardContent extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.lg),
-        Text(
-          'Dados de demonstração. Conecte uma conta para ver os seus.',
-          textAlign: TextAlign.center,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
-          ),
-        ),
       ],
     );
   }
