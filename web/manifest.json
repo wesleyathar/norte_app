@@ -1,9 +1,12 @@
 {
     "name": "Norte · Finanças pessoais",
     "short_name": "Norte",
+    "id": "/",
     "start_url": ".",
     "scope": ".",
     "display": "standalone",
+    "display_override": ["standalone", "minimal-ui"],
+    "dir": "ltr",
     "background_color": "#FDFBFF",
     "theme_color": "#2F5BFF",
     "description": "Organize suas finanças com Open Finance, categorização por IA e sincronização segura.",
