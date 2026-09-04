@@ -7,6 +7,7 @@ import 'data/auth/firebase_account_auth_service.dart';
 import 'data/local/local_auth_repository.dart';
 import 'data/ml/categorizer_store.dart';
 import 'data/ml/naive_bayes_categorizer.dart';
+import 'data/openfinance/pluggy_open_finance_service.dart';
 import 'data/remote/firestore_finance_repository.dart';
 import 'firebase_options.dart';
 
@@ -28,6 +29,7 @@ Future<void> main() async {
     repository: repository,
     authRepository: authRepository,
     accountAuthService: accountAuthService,
+    openFinanceService: const PluggyOpenFinanceService(),
     categorizer: categorizer,
   ));
 }

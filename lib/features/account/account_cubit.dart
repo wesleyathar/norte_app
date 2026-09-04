@@ -60,6 +60,8 @@ class AccountCubit extends Cubit<AccountState> {
     try {
       await _service.signInWithGoogle();
       // O estado final chega pelo authStateChanges.
+    } on RedirectInProgress {
+      // Página vai recarregar; login conclui no retorno. Não é erro.
     } catch (error) {
       if (kDebugMode) debugPrint('Falha no login Google: $error');
       emit(

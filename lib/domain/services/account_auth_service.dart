@@ -24,3 +24,9 @@ abstract interface class AccountAuthService {
 
   Future<void> signOut();
 }
+
+/// Sinaliza que o login seguiu por redirecionamento (web mobile): a página vai
+/// recarregar e a sessão é concluída pelo authStateChanges, então não é erro.
+class RedirectInProgress implements Exception {
+  const RedirectInProgress();
+}

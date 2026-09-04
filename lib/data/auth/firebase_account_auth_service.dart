@@ -28,8 +28,25 @@ class FirebaseAccountAuthService implements AccountAuthService {
       final provider = GoogleAuthProvider()
         ..addScope('email')
         ..setCustomParameters({'prompt': 'select_account'});
-      final result = await _auth.signInWithPopup(provider);
-      return _requireUser(result.user);
+      try {
+        final result = await _auth.signInWithPopup(provider);
+        return _requireUser(result.user);
+      } on FirebaseAuthException catch (e) {
+        // No celular/TWA o popup costuma ser bloqueado: cai no redirect, que
+        // recarrega a página e conclui o login via authStateChanges.
+        const popupIssues = {
+          'popup-blocked',
+          'popup-closed-by-user',
+          'cancelled-popup-request',
+          'operation-not-supported-in-this-environment',
+          'web-context-canceled',
+        };
+        if (popupIssues.contains(e.code)) {
+          await _auth.signInWithRedirect(provider);
+          throw const RedirectInProgress();
+        }
+        rethrow;
+      }
     }
 
     if (!_googleInitialized) {
