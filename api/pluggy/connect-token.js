@@ -1,4 +1,4 @@
-const { PLUGGY_BASE, getApiKey, readJsonBody } = require('./_pluggy');
+const { PLUGGY_BASE, getApiKey, readJsonBody } = require('../_pluggy');
 
 // Cria um Connect Token para o widget Pluggy Connect abrir com segurança.
 // O client secret nunca é enviado ao navegador.
